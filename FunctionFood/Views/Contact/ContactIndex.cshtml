@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Liên Hệ - Cửa Hàng Thực Phẩm Chức Năng";
+}
+
+<div class="heading">
+    <h1>Liên Hệ Với Chúng Tôi</h1>
+    <p> <a asp-controller="Home" asp-action="HomeIndex">Trang Chủ >></a> Liên Hệ </p>
+</div>
+
+<section class="contact">
+
+    <div class="icons-container">
+
+        <div class="icons">
+            <i class="fas fa-phone"></i>
+            <h3>Số Điện Thoại</h3>
+            <p>0901 234 567</p>
+            <p>0987 654 321</p>
+        </div>
+
+        <div class="icons">
+            <i class="fas fa-envelope"></i>
+            <h3>Email</h3>
+            <p>lienhe@thucphamchucnang.vn</p>
+            <p>support@thucphamchucnang.vn</p>
+        </div>
+
+        <div class="icons">
+            <i class="fas fa-map-marker-alt"></i>
+            <h3>Địa Chỉ</h3>
+            <p>08,Nguyễn Hoàng ,Lâm Đồng</p>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <!-- SweetAlert CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            document.getElementById("contactForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                const form = e.target;
+                const formData = new FormData(form);
+
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Gửi thành công!',
+                        text: 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        form.reset(); // Xóa nội dung form
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Đã xảy ra lỗi khi gửi phản hồi.',
+                        icon: 'error',
+                        confirmButtonText: 'Thử lại'
+                    });
+                }
+            });
+        </script>
+        <form asp-action="SendContact" method="post">
+            <h3>Gửi Tin Nhắn Cho Chúng Tôi</h3>
+            <div class="inputBox">
+                <input name="Name" class="form-control" placeholder="Nhập họ tên của bạn" required />
+                <input name="Email" class="form-control" placeholder="Nhập Email của bạn" required />
+            </div>
+            <div class="inputBox">
+                <input name="Phone" class="form-control" placeholder="Nhập số điện thoại" required />
+                <input name="Subject" class="form-control" placeholder="Chủ đề" required />
+            </div>
+            <textarea name="Message" class="form-control" placeholder="Nhập nội dung tin nhắn của bạn..." required></textarea>
+            <button type="submit" class="btn btn-primary">Gửi Liên Hệ</button>
+        </form>
+
+        <iframe class="map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.7807459840074!2d106.68220857589405!3d10.827385958401173!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528ce20e3d2a9%3A0x20ec8f8ebf9c307!2zMTIzIE5ndXnhu4VuIFbEg24gQ-G7rSwgUXXhuq1uIDUsIFTDom4gUGjGsMahbmcgSG_DoCBO4buZaQ!5e0!3m2!1svi!2s!4v1748100000000!5m2!1svi!2s" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+
+</section>

@@ -1,0 +1,359 @@
+﻿<style>
+    :root {
+        --green: #0077cc;
+        --black: #1f1f1f;
+        --white: #ffffff;
+        --light-color: #666666;
+        --light-bg: #f9f9f9;
+        --border: 1px solid rgba(0, 0, 0, 0.1);
+        --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        --success: #2ecc71;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+    }
+
+    .container {
+        margin-top: 120px;
+    }
+
+    .card {
+        border-radius: 12px;
+        box-shadow: var(--box-shadow);
+        border: none;
+        margin-bottom: 30px;
+        background-color: var(--white);
+        transition: all 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+    .invoice-header {
+        background: linear-gradient(to right, var(--green), #0077cc);
+        color: var(--white);
+        padding: 16px 20px;
+        border-radius: 12px 12px 0 0;
+        font-size: 1.6rem;
+    }
+
+    .invoice-status {
+        font-weight: 600;
+        padding: 6px 15px;
+        border-radius: 25px;
+        font-size: 1.2rem;
+        background-color: var(--white);
+    }
+
+    .status-pending {
+        color: var(--warning);
+        border: 1px solid var(--warning);
+    }
+
+    .status-confirmed {
+        color: var(--success);
+        border: 1px solid var(--success);
+    }
+
+    .status-canceled {
+        color: var(--danger);
+        border: 1px solid var(--danger);
+    }
+
+    .product-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        object-fit: cover;
+        padding: 5px;
+        background-color: var(--light-bg);
+        border: var(--border);
+    }
+
+    .btn-cancel {
+        background-color: var(--danger);
+        color: var(--white);
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+    }
+
+        .btn-cancel:hover {
+            background-color: #c0392b;
+            transform: scale(1.03);
+        }
+
+    .invoice-details {
+        background-color: var(--light-bg);
+        border-radius: 10px;
+        padding: 20px;
+        border: var(--border);
+    }
+
+    .total-amount {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: var(--green);
+    }
+
+    .search-container {
+        background-color: var(--white);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: var(--box-shadow);
+        margin-bottom: 25px;
+        border: var(--border);
+    }
+
+    .filter-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 1.4rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.3s;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+        .filter-badge:hover,
+        .filter-badge.active {
+            border: 2px solid var(--green);
+            background-color: var(--light-bg);
+        }
+
+        .filter-badge span.badge {
+            background-color: var(--white);
+            padding: 4px 10px;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .filter-badge.all {
+            background-color: #444;
+            color: var(--white);
+        }
+
+        .filter-badge.pending {
+            background-color: var(--warning);
+            color: var(--white);
+        }
+
+        .filter-badge.confirmed {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .filter-badge.canceled {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+
+    .input-group .form-control {
+        height: 50px;
+        font-size: 1.6rem;
+        border-radius: 5px 0 0 5px;
+    }
+
+    .input-group .btn {
+        font-size: 1.6rem;
+        border-radius: 0 5px 5px 0;
+        background-color: var(--green);
+        color: var(--white);
+    }
+
+    .invoice-id {
+        font-weight: bold;
+        font-size: 1.4rem;
+        color: var(--black);
+    }
+
+    .customer-info {
+        border-left: 4px solid var(--green);
+        padding-left: 15px;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--green);
+        border-color: var(--green);
+        color: var(--white);
+    }
+
+    .pagination .page-link {
+        color: var(--black);
+        font-size: 1.4rem;
+    }
+
+        .pagination .page-link:hover {
+            color: var(--green);
+        }
+
+    .text-success {
+        color: var(--success) !important;
+    }
+
+    .text-danger {
+        color: var(--danger) !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(124, 179, 66, 0.08);
+    }
+</style>
+
+@model List<FunctionFood.Models.Invoice>
+
+@{
+    ViewData["Title"] = "Đơn hàng thực phẩm chức năng";
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="container">
+        <h2 class="mb-4">Lịch sử đơn hàng của bạn</h2>
+
+        <!-- Bộ lọc trạng thái đơn hàng -->
+        <div class="search-container mb-4">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Tìm theo mã đơn, tên khách...">
+                        <button class="btn" style="background-color: var(--green); color: var(--white);">
+                            <i class="fas fa-search me-1"></i>Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 d-flex gap-2 flex-wrap">
+                <a asp-action="SortOrderStatus" asp-route-status="" class="filter-badge all @(ViewBag.SelectedStatus == "" ? "active" : "")">
+                    Tất cả <span class="badge">@ViewBag.CountAll</span>
+                </a>
+                <a asp-action="SortOrderStatus" asp-route-status="Đang xử lý" class="filter-badge pending @(ViewBag.SelectedStatus == "Pending" ? "active" : "")">
+                    Chưa xác nhận <span class="badge">@ViewBag.CountPending</span>
+                </a>
+                <a asp-action="SortOrderStatus" asp-route-status="Đã xác nhận" class="filter-badge confirmed @(ViewBag.SelectedStatus == "Confirmed" ? "active" : "")">
+                    Đã xác nhận <span class="badge">@ViewBag.CountConfirmed</span>
+                </a>
+                <a asp-action="SortOrderStatus" asp-route-status="Đã hủy" class="filter-badge canceled @(ViewBag.SelectedStatus == "Canceled" ? "active" : "")">
+                    Đã hủy <span class="badge">@ViewBag.CountCanceled</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Danh sách đơn hàng -->
+        @foreach (var invoice in Model)
+        {
+            var firstDetail = invoice.InvoiceDetails.FirstOrDefault();
+            var name = invoice.CustomerName ?? firstDetail?.Invoice?.CustomerName ?? "Không có";
+            var phone = invoice.Phone ?? firstDetail?.Invoice?.Phone ?? "Không có";
+            var address = invoice.DeliveryAddress ?? firstDetail?.Invoice?.DeliveryAddress ?? "Không có";
+            var note = firstDetail?.Note ?? "Không có";
+
+            <div class="card mb-4">
+                <div class="invoice-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="invoice-id">#@invoice.InvoiceId</span>
+                        <span class="invoice-status status-@invoice.Status.ToLower().Replace(" ", "-") ms-2">@invoice.Status</span>
+                    </div>
+                    <div>
+                        <span><i class="far fa-calendar me-1"></i>@invoice.CreatedDate?.ToString("dd/MM/yyyy HH:mm")</span>
+                        <span class="ms-3"><i class="fas fa-user me-1"></i>@invoice.User.UserName</span>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-user me-2"></i>Thông tin người nhận</h5>
+                            <p><strong>Họ tên:</strong> @name</p>
+                            <p><strong>SĐT:</strong> @phone</p>
+                            <p><strong>Địa chỉ:</strong> @address</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-money-bill-wave me-2"></i>Chi phí</h5>
+                            <p><strong>Tổng tiền:</strong> <span class="total-amount">@invoice.TotalAmount?.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</span></p>
+                            <p><strong>Ghi chú:</strong> @note</p>
+                        </div>
+                    </div>
+
+                    <h5><i class="fas fa-box-open me-2"></i>Chi tiết đơn hàng</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Tên sản phẩm</th>
+                                    <th class="text-center">SL</th>
+                                    <th class="text-end">Giá</th>
+                                    <th class="text-end">Tổng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in invoice.InvoiceDetails)
+                                {
+                                    <tr>
+                                        <td><img src="@item.Product.Image" class="product-image" /></td>
+                                        <td>@item.Product.ProductName</td>
+                                        <td class="text-center">@item.Quantity</td>
+                                        <td class="text-end">@item.Price?.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                                        <td class="text-end">@((item.Price * item.Quantity)?.ToString("C0", new System.Globalization.CultureInfo("vi-VN")))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        @if (invoice.Status == "Đang xử lý")
+                        {
+                            <form asp-action="CancelInvoice" method="post" asp-route-invoiceId="@invoice.InvoiceId" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
+                                <button class="btn btn-cancel"><i class="fas fa-times me-1"></i>Hủy đơn</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="fw-bold text-secondary">Trạng thái: @invoice.Status</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Phân trang -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="SortOrderStatus" asp-route-status="@ViewBag.SelectedStatus" asp-route-page="@(currentPage - 1)">Trước</a>
+                </li>
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="SortOrderStatus" asp-route-status="@ViewBag.SelectedStatus" asp-route-page="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="SortOrderStatus" asp-route-status="@ViewBag.SelectedStatus" asp-route-page="@(currentPage + 1)">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}
+else
+{
+    <!-- Không có đơn hàng -->
+    <div class="empty-cart text-center mt-5">
+        <img src="https://www.svgrepo.com/show/17356/empty-cart.svg" alt="Chưa có đơn hàng" style="max-width: 200px;" />
+        <h3 class="mt-3">Bạn chưa có đơn hàng nào</h3>
+        <p>Hãy khám phá các sản phẩm thực phẩm chức năng chất lượng cao tại cửa hàng của chúng tôi!</p>
+        <a href="/Shop" class="btn btn-success mt-2"><i class="fas fa-shopping-cart me-2"></i> Mua sắm ngay</a>
+    </div>
+}

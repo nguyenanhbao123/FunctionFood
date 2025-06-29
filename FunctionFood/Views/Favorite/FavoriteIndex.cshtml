@@ -1,0 +1,91 @@
+﻿@model IEnumerable<FunctionFood.Models.Product>
+@{
+    ViewData["Title"] = "Danh sách yêu thích - Thực Phẩm Chức Năng";
+    var ModelFavorites = ViewBag.ModelFavorites as List<string> ?? new List<string>();
+}
+
+<div class="heading">
+    <h1>Cửa Hàng Thực Phẩm Chức Năng</h1>
+    <p> <a asp-controller="Home" asp-action="HomeIndex">Trang Chủ >></a> Danh sách yêu thích </p>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <section class="category">
+        <h1 class="title"> Danh Mục <span>Sản Phẩm</span> <a href="#">Xem Tất Cả >></a> </h1>
+
+        <div class="box-container">
+            <a asp-controller="Shop" asp-action="ShopCategory" asp-route-category="Vitamin" class="box">
+                <img src="~/image/vitamin.png" alt="">
+                <h3>Vitamin & Khoáng Chất</h3>
+            </a>
+
+            <a asp-controller="Shop" asp-action="ShopCategory" asp-route-category="Tăng sức đề kháng" class="box">
+                <img src="~/image/immunity.png" alt="">
+                <h3>Tăng Sức Đề Kháng</h3>
+            </a>
+
+            <a asp-controller="Shop" asp-action="ShopCategory" asp-route-category="Hỗ trợ tiêu hóa" class="box">
+                <img src="~/image/digest.png" alt="">
+                <h3>Hỗ Trợ Tiêu Hóa</h3>
+            </a>
+
+            <a asp-controller="Shop" asp-action="ShopCategory" asp-route-category="Làm đẹp" class="box">
+                <img src="~/image/beauty.png" alt="">
+                <h3>Làm Đẹp - Chống Lão Hóa</h3>
+            </a>
+
+            <a asp-controller="Shop" asp-action="ShopCategory" asp-route-category="Sản phẩm cho người lớn tuổi" class="box">
+                <img src="~/image/elderly.png" alt="">
+                <h3>Dành Cho Người Lớn Tuổi</h3>
+            </a>
+        </div>
+    </section>
+
+    <section class="products">
+        <h1 class="title"> Sản Phẩm <span>Yêu Thích</span> <a href="#">Xem Tất Cả >></a> </h1>
+
+        <div class="box-container">
+            @foreach (var product in Model)
+            {
+                <div class="box">
+                    <div class="icons">
+                        <a asp-controller="Cart"
+                           asp-action="AddToCart"
+                           asp-route-productId="@product.ProductId"
+                           class="add-to-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                        </a>
+                        <a href="#"
+                           class="fas fa-heart favorite-icon @(ModelFavorites.Contains(product.ProductId) ? "favorited" : "")"
+                           data-product-id="@product.ProductId"
+                           data-is-favorited="@(ModelFavorites.Contains(product.ProductId).ToString().ToLower())"
+                           style="color: @(ModelFavorites.Contains(product.ProductId) ? "#e74c3c" : "#666"); cursor: pointer;">
+                        </a>
+                        <a asp-controller="Shop" asp-action="Shopdetail" asp-route-id="@product.ProductId" class="fas fa-eye"></a>
+                    </div>
+                    <div class="image">
+                        <img src="@product.Image" alt="@product.ProductName" />
+                    </div>
+                    <div class="content">
+                        <h3>@product.ProductName</h3>
+                        <div class="price">@product.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</div>
+                        <div class="stars">
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+else
+{
+    <div id="empty-cart" class="empty-cart">
+        <img src="https://www.svgrepo.com/show/17356/empty-cart.svg" alt="Empty cart" />
+        <h1 class="mb-3"><strong>Danh sách yêu thích của bạn đang trống</strong></h1>
+        <p style="max-width: 600px; margin: 0 auto;">Khám phá các sản phẩm thực phẩm chức năng chất lượng để bảo vệ sức khỏe và thêm vào danh sách yêu thích của bạn.</p>
+        <a href="/Shop/ShopIndex" class="btn-shopping mt-4">
+            <i class="fas fa-shopping-bag me-2"></i> KHÁM PHÁ NGAY
+        </a>
+    </div>
+}

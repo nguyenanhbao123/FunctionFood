@@ -1,0 +1,84 @@
+﻿@model IEnumerable<FunctionFood.Models.Product>
+@{
+    ViewData["Title"] = "Cửa Hàng - Functional Food";
+}
+}
+
+<div class="heading">
+    <h1>Cửa Hàng Thực Phẩm Chức Năng</h1>
+    <p> <a asp-controller="Home" asp-action="HomeIndex">Trang Chủ >></a> Cửa Hàng </p>
+</div>
+
+<section class="category">
+
+    <h1 class="title"> Danh Mục <span>Sản Phẩm</span> <a href="#">Xem Tất Cả >></a> </h1>
+
+    <div class="box-container">
+
+        <a asp-controller="Shop" asp-action="ShopCategory" asp-route-category="Vitamin" class="box">
+            <img src="~/image/supplement-vitamin.png" alt="">
+            <h3>Vitamin & Khoáng Chất</h3>
+        </a>
+
+        <a asp-controller="Shop" asp-action="ShopCategory" asp-route-category="Tăng đề kháng" class="box">
+            <img src="~/image/supplement-immunity.png" alt="">
+            <h3>Tăng Cường Đề Kháng</h3>
+        </a>
+
+        <a asp-controller="Shop" asp-action="ShopCategory" asp-route-category="Làm đẹp" class="box">
+            <img src="~/image/supplement-beauty.png" alt="">
+            <h3>Hỗ Trợ Làm Đẹp</h3>
+        </a>
+
+        <a asp-controller="Shop" asp-action="ShopCategory" asp-route-category="Tiêu hóa" class="box">
+            <img src="~/image/supplement-digestion.png" alt="">
+            <h3>Hỗ Trợ Tiêu Hóa</h3>
+        </a>
+
+        <a asp-controller="Shop" asp-action="ShopCategory" asp-route-category="Chức năng não" class="box">
+            <img src="~/image/supplement-brain.png" alt="">
+            <h3>Hỗ Trợ Trí Não</h3>
+        </a>
+
+    </div>
+
+</section>
+
+<section class="products">
+
+    <h1 class="title"> Sản Phẩm <span>Mới Nhất</span> <a href="#">Xem Tất Cả >></a> </h1>
+
+    <div class="box-container">
+        @foreach (var product in Model)
+        {
+            <div class="box">
+                <div class="icons">
+                    <a asp-controller="Cart"
+                       asp-action="AddToCart"
+                       asp-route-productId="@product.ProductId"
+                       class="add-to-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                    <a href="/Favorite/AddToFavorite?productId=@product.ProductId" class="favorite-icon">
+                        <i class="fas fa-heart" title="Thêm vào yêu thích"></i>
+                    </a>
+
+                    <a asp-controller="Shop" asp-action="Shopdetail" asp-route-id="@product.ProductId" class="fas fa-eye"></a>
+                </div>
+                <div class="image">
+                    <img src="@product.Image" alt="@product.ProductName" />
+                </div>
+                <div class="content">
+                    <h3>@product.ProductName</h3>
+                    <div class="price">@product.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</div>
+                    <div class="stars">
+                        @{
+                            // Có thể hiển thị đánh giá sao ở đây nếu có dữ liệu
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</section>
